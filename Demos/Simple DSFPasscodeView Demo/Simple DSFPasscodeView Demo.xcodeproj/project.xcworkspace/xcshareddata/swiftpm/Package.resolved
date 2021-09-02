@@ -1,0 +1,16 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "VIViewInvalidating",
+        "repositoryURL": "https://github.com/dagronf/VIViewInvalidating",
+        "state": {
+          "branch": null,
+          "revision": "79d4d47483a4241de18162b339db1015912e7716",
+          "version": "2.0.2"
+        }
+      }
+    ]
+  },
+  "version": 1
+}
