@@ -61,7 +61,7 @@ extension DSFNumericalPasscodeView {
 				}
 			}
 		}
-		
+
 		override init(frame frameRect: NSRect) {
 			super.init(frame: frameRect)
 			self.setup()
@@ -95,6 +95,11 @@ extension DSFNumericalPasscodeView {
 		
 		// Is the cell editable?
 		var isEditable = false
+
+		// Is high contrast turned on
+		@inlinable var shouldIncreaseContrast: Bool {
+			NSWorkspace.shared.accessibilityDisplayShouldIncreaseContrast
+		}
 	}
 }
 
@@ -133,22 +138,16 @@ extension DSFNumericalPasscodeView.Cell {
 		let pth = NSBezierPath(roundedRect: rect.insetBy(dx: 1, dy: 1), xRadius: 4, yRadius: 4)
 		pth.lineWidth = 1
 		if self.isEnabled {
-			NSColor.secondaryLabelColor.setStroke()
-			
-			if self.content.count > 0 {
-				NSColor.textBackgroundColor.setFill()
-			}
-			else {
-				NSColor.textBackgroundColor.withAlphaComponent(0.4).setFill()
-			}
+			self.shouldIncreaseContrast ? NSColor.textColor.setStroke() : NSColor.secondaryLabelColor.setStroke()
+			NSColor.controlBackgroundColor.setFill()
 			pth.fill()
 		}
 		else {
-			NSColor.secondaryLabelColor.setStroke()
+			NSColor.placeholderTextColor.setStroke()
 		}
 		pth.stroke()
 		
-		if self.window?.firstResponder == self {
+		if !self.shouldIncreaseContrast && self.window?.firstResponder == self {
 			let pth = NSBezierPath(roundedRect: rect.insetBy(dx: self.insetSize, dy: self.insetSize), xRadius: 2, yRadius: 2)
 			let c = NSColor.selectedTextBackgroundColor.withAlphaComponent(0.4)
 			c.setFill()
@@ -190,11 +189,14 @@ extension DSFNumericalPasscodeView.Cell {
 		case kVK_ForwardDelete:
 			self.content = ""
 			self.parent.cellDidUpdate(self.index, .dontMove)
-			
 		case kVK_Tab:
 			super.keyDown(with: event)
 			return
-			
+		case kVK_Escape:
+			super.keyDown(with: event)
+			return
+		case kVK_ANSI_KeypadClear:
+			self.parent.cellDidUpdate(self.index, .clear)
 		default:
 			NSSound.beep()
 			return
@@ -206,7 +208,11 @@ extension DSFNumericalPasscodeView.Cell {
 
 extension DSFNumericalPasscodeView.Cell {
 	override var acceptsFirstResponder: Bool {
-		return self.isEnabled && self.isEditable
+		let r = self.isEnabled && self.isEditable
+		if r == false {
+			self.parent.userClickedInactiveCell()
+		}
+		return r
 	}
 	
 	override var focusRingMaskBounds: NSRect {
@@ -214,9 +220,11 @@ extension DSFNumericalPasscodeView.Cell {
 	}
 	
 	override func becomeFirstResponder() -> Bool {
-		let r = super.becomeFirstResponder()
 		self.needsDisplay = true
-		return r
+		if self.isEnabled, self.isEditable {
+			return true
+		}
+		return super.becomeFirstResponder()
 	}
 	
 	override func resignFirstResponder() -> Bool {

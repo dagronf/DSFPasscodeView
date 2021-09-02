@@ -50,4 +50,13 @@ extension NSEdgeInsets {
 	}
 }
 
+extension NSEdgeInsets: Equatable {
+	@inlinable public static func == (lhs: NSEdgeInsets, rhs: NSEdgeInsets) -> Bool {
+		return lhs.top == rhs.top &&
+			lhs.bottom == rhs.bottom &&
+			lhs.left == rhs.left &&
+			lhs.right == rhs.right
+	}
+}
+
 #endif

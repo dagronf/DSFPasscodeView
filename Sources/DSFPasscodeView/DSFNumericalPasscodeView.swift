@@ -54,20 +54,12 @@ public class DSFNumericalPasscodeView: NSView {
 	}
 
 	/// The spacing between passcode groupings
-	@IBInspectable var groupSpacing: CGFloat = 12 {
-		didSet {
-			self.stack.spacing = groupSpacing
-		}
-	}
+	@VIViewInvalidating(.layout)
+	@IBInspectable var groupSpacing: CGFloat = 12
 
 	/// The spacing between individual passcode characters
-	@IBInspectable var spacing: CGFloat = 4 {
-		didSet {
-			self.stack.arrangedSubviews
-				.compactMap { $0 as? NSStackView }
-				.forEach { $0.spacing = spacing }
-		}
-	}
+	@VIViewInvalidating(.layout)
+	@IBInspectable var spacing: CGFloat = 4
 
 	/// The spacing of the characters from the leading and trailing edges of the passcode character cell
 	@IBInspectable var xPadding: CGFloat = 8 {
@@ -88,6 +80,7 @@ public class DSFNumericalPasscodeView: NSView {
 	}
 
 	/// Configure the font size of the font to be used. If the font cannot be found no changes are made.
+	@VIViewInvalidating(.layout)
 	var font: NSFont = DSFNumericalPasscodeView.DefaultFont {
 		didSet {
 			self.cellViews.forEach { $0.font = self.font }
@@ -95,7 +88,7 @@ public class DSFNumericalPasscodeView: NSView {
 	}
 
 	/// The padding of the characters from the edges of the passcode cell
-	@VIViewInvalidating(.intrinsicContentSize, .display)
+	@VIViewInvalidating(.intrinsicContentSize, .layout, .display)
 	var padding: CGSize = CGSize(width: 8, height: 4) {
 		didSet {
 			self.cellViews.forEach { $0.padding = self.padding }
@@ -121,18 +114,32 @@ public class DSFNumericalPasscodeView: NSView {
 	/// The pattern to use when displaying the passcode
 	@IBInspectable
 	public var pattern: String = "XXX-XXX" {
+		willSet {
+			assert(newValue.filter({ $0 != "X" && $0 != "-" }).isEmpty, "Invalid pattern character (must be X or -)")
+		}
 		didSet {
 			self.updateForPattern()
 		}
 	}
 
-	/// The number of characters in the current passcode
-	public var passcodeCharCount: Int {
-		self.cellViews.count
-	}
+	/// Inset for the passcode cells within the control
+	@VIViewInvalidating(.intrinsicContentSize, .layout)
+	public var edgeInsets: NSEdgeInsets = NSEdgeInsets()
 
 	/// Returns true if the passcode contains a valid passcode
-	@objc public var isValid: Bool = false
+	@objc public dynamic var isValidPasscode: Bool {
+		return self.passcodeValue != nil
+	}
+
+	/// Returns the passcode value, or nil the passcode isn't yet valid
+	@objc public private(set) dynamic var passcodeValue: String? {
+		willSet {
+			self.willChangeValue(for: \.isValidPasscode)
+		}
+		didSet {
+			self.didChangeValue(for: \.isValidPasscode)
+		}
+	}
 
 	override init(frame frameRect: NSRect) {
 		super.init(frame: frameRect)
@@ -152,39 +159,82 @@ public class DSFNumericalPasscodeView: NSView {
 				NSFont(name: "Menlo", size: DSFNumericalPasscodeView.DefaultFontSize)!
 	}()
 
-	private var cellViews: [Cell] = []
-
-	var currentValue: String = ""
-
-	let stack: NSStackView = {
-		let s = NSStackView()
-		s.translatesAutoresizingMaskIntoConstraints = false
-		s.orientation = .horizontal
-		s.spacing = 4
-		s.setHuggingPriority(.defaultHigh, for: .horizontal)
-		s.setHuggingPriority(.defaultHigh, for: .vertical)
-		return s
-	}()
-
-
-	enum UpdateType {
-		case moveBack
-		case moveForward
-		case dontMove
+	/// The number of characters in the current passcode
+	private var passcodeCellCount: Int {
+		self.cellViews.count
 	}
 
+	// The active cell views
+	private var cellViews: [Cell] = []
+
+	// The string containing the current cell values
+	private var currentValue: String = ""
+
+	// The index of the cell that is currently editing
+	private var currentlyEditingCellIndex: Int = 0
+}
+
+extension DSFNumericalPasscodeView {
 	public override func prepareForInterfaceBuilder() {
 		self.cellViews.forEach { $0.content = "0" }
+	}
+
+	public override var intrinsicContentSize: NSSize {
+		guard let templateCell = self.cellViews.first else { return .zero }
+		let cs = templateCell.characterSize
+		let h = cs.height + self.edgeInsets.top + self.edgeInsets.bottom
+		var w: CGFloat = self.edgeInsets.left + self.edgeInsets.right
+		self.pattern.enumerated().forEach { char in
+			if char.1 == "X" {
+				if char.0 != 0 {
+					w += self.spacing
+				}
+				w += cs.width
+			}
+			else if char.1 == "-" {
+				w += self.groupSpacing
+			}
+		}
+		return CGSize(width: w, height: h)
+	}
+
+
+	public override func layout() {
+		super.layout()
+
+		guard let templateCell = self.cellViews.first else { return }
+		let cs = templateCell.characterSize
+
+		var cellOffset: Int = 0
+		var xOffset: CGFloat = self.edgeInsets.left
+
+		self.pattern.enumerated().forEach { char in
+			if char.1 == "X" {
+				let cell = self.cellViews[cellOffset]
+				if char.0 != 0 {
+					xOffset += self.spacing
+				}
+				cell.frame = NSRect(x: xOffset, y: self.edgeInsets.top, width: cs.width, height: cs.height)
+				xOffset += cs.width
+
+				cellOffset += 1
+			}
+			if char.1 == "-" {
+				xOffset += self.groupSpacing
+			}
+		}
 	}
 }
 
 public extension DSFNumericalPasscodeView {
 	/// Reset the contents of the passcode view to empty
 	func clear() {
+		self.passcodeValue = nil
 		self.cellViews.forEach {
 			$0.content = ""
 			$0.isEditable = false
 		}
+		self.currentlyEditingCellIndex = 0
 		self.cellViews.first?.isEditable = true
 		self.window?.makeFirstResponder(self.cellViews.first)
 	}
@@ -192,12 +242,7 @@ public extension DSFNumericalPasscodeView {
 
 extension DSFNumericalPasscodeView {
 	func setup() {
-		self.translatesAutoresizingMaskIntoConstraints = false
-		self.addSubview(self.stack)
-		self.stack.pinEdges(to: self)
-
-		self.setContentHuggingPriority(.required, for: .horizontal)
-
+		self.translatesAutoresizingMaskIntoConstraints = true
 		self.pattern = "XXX-XXX"
 	}
 }
@@ -205,20 +250,11 @@ extension DSFNumericalPasscodeView {
 // MARK: - First Responder handling
 
 public extension DSFNumericalPasscodeView {
-	override var acceptsFirstResponder: Bool {
-		return true
+	internal func userClickedInactiveCell() {
+		// User attempted to click a cell -- make sure we focus the currently editable field
+		self.window?.makeFirstResponder(self.cellViews[self.currentlyEditingCellIndex])
 	}
 
-	override func becomeFirstResponder() -> Bool {
-		for c in self.cellViews {
-			if c.content == "" {
-				self.window?.makeFirstResponder(c)
-				return true
-			}
-		}
-		self.window?.makeFirstResponder(self.cellViews.last)
-		return true
-	}
 }
 
 // MARK: - Accessibility
@@ -246,7 +282,14 @@ public extension DSFNumericalPasscodeView {
 
 extension DSFNumericalPasscodeView {
 
-	func syncValue() {
+	enum UpdateType {
+		case moveBack
+		case moveForward
+		case dontMove
+		case clear
+	}
+
+	func syncCurrentValue() {
 		self.currentValue = ""
 		for cell in self.cellViews {
 			if cell.content.count == 0 {
@@ -259,125 +302,108 @@ extension DSFNumericalPasscodeView {
 	func updateForPattern() {
 		self.cellViews.forEach { $0.removeFromSuperview() }
 		self.cellViews = []
-		self.stack.arrangedSubviews.forEach { $0.removeFromSuperview() }
-		self.stack.spacing = self.groupSpacing
 
-		var currentGroup: NSStackView? = nil
-
-		var count = 0
-		pattern.forEach { ch in
-			if ch == "X" {
-				if currentGroup == nil {
-					currentGroup = NSStackView()
-					currentGroup?.translatesAutoresizingMaskIntoConstraints = false
-					currentGroup?.orientation = .horizontal
-					currentGroup?.distribution = .fillEqually
-					currentGroup?.spacing = self.spacing
-				}
-
-				let r = Cell()
-				r.font = self.font
-				r.parent = self
-				r.index = count
-				r.allowableCharacters = self.allowableCharacters
-				r.setAccessibilityTitle(Localizations.PasscodeCharAccessibilityTitle(index: count + 1, total: self.passcodeCharCount))
-				self.cellViews.append(r)
-				currentGroup?.addArrangedSubview(r)
-				count += 1
-			}
-			else if ch == "-" {
-				if let c = currentGroup {
-					self.stack.addArrangedSubview(c)
-				}
-				currentGroup = nil
-			}
+		let newCount = self.pattern.filter({ $0 == "X" }).count
+		(0 ..< newCount).forEach { index in
+			let r = Cell()
+			r.font = self.font
+			r.parent = self
+			r.index = index
+			r.allowableCharacters = self.allowableCharacters
+			r.setAccessibilityTitle(Localizations.PasscodeCharAccessibilityTitle(index: index + 1, total: self.passcodeCellCount))
+			self.cellViews.append(r)
+			self.addSubview(r)
 		}
 
-		if let c = currentGroup {
-			self.stack.addArrangedSubview(c)
-		}
-
+		self.currentlyEditingCellIndex = 0
 		self.cellViews.first?.isEditable = true
-
-		self.window?.recalculateKeyViewLoop()
 	}
 
 	func cellDidUpdate(_ index: Int, _ updateType: UpdateType) {
-		if updateType == .moveBack {
-			// User deleted a character
+
+		switch updateType {
+		case .clear:
+			// Pressed clear key on a numpad
+			self.handleClear(index)
+		case .moveBack:
+			// User deleted a character using the 'backwards delete' key
+			self.handleMoveBack(index)
+		case .moveForward:
+			// User typed a valid character
+			self.handleMoveForward(index)
+		case .dontMove:
+			// User pressed the forward-delete key
+			self.handleDontMove(index)
+		}
+
+		self.syncCurrentValue()
+
+		/// If we have a value which matches the pattern then tell the delegate
+		if self.passcodeCellCount == self.currentValue.count {
+			self.passcodeValue = self.currentValue
+			self.delegate?.passcodeView(self, updatedPasscodeValue: self.currentValue)
+		}
+		else {
+			if self.passcodeValue != nil {
+				self.passcodeValue = nil
+			}
+		}
+	}
+}
+
+// MARK: - Handle cell events
+
+extension DSFNumericalPasscodeView {
+	func handleClear(_ index: Int) {
+		self.clear()
+		return
+	}
+
+	func handleMoveBack(_ index: Int) {
+		// User deleted a character using the 'backwards delete' key
+		self.currentlyEditingCellIndex = max(0, index - 1)
+
+		self.cellViews.enumerated().forEach { cell in
+			cell.1.isEditable = cell.0 == self.currentlyEditingCellIndex
+			if cell.0 > self.currentlyEditingCellIndex {
+				cell.1.content = ""
+			}
+			if cell.0 == self.currentlyEditingCellIndex {
+				cell.1.window?.makeFirstResponder(cell.1)
+			}
+		}
+	}
+
+	func handleMoveForward(_ index: Int) {
+		// User typed a valid character
+		self.currentlyEditingCellIndex = min(self.passcodeCellCount - 1, index + 1)
+
+		self.cellViews.enumerated().forEach { cell in
+			cell.1.isEditable = cell.0 == self.currentlyEditingCellIndex
+			if cell.0 > self.currentlyEditingCellIndex {
+				cell.1.content = ""
+			}
+		}
+
+		if index != self.passcodeCellCount - 1 {
+			let cell = self.cellViews[index + 1]
+			self.window?.makeFirstResponder(cell)
+		}
+		else {
+			self.window?.makeFirstResponder(nil)
+		}
+	}
+
+	func handleDontMove(_ index: Int) {
+		// User pressed the forward-delete key
+		self.cellViews[index].isEditable = true
+		if index < self.cellViews.count - 1 {
+			self.cellViews[index + 1].isEditable = true
 			let affectedCells = self.cellViews.suffix(self.cellViews.count - index - 1)
 			affectedCells.forEach {
 				$0.content = ""
 				$0.isEditable = false
 			}
-		}
-
-		if updateType == .moveForward {
-			// User added a character
-			self.cellViews[index].isEditable = true
-			if index < self.cellViews.count - 1 {
-				self.cellViews[index + 1].isEditable = true
-				let affectedCells = self.cellViews.suffix(self.cellViews.count - index - 2)
-				affectedCells.forEach {
-					if $0.content.count > 0 {
-						$0.isEditable = true
-					}
-					else {
-						$0.isEditable = false
-					}
-				}
-			}
-		}
-
-		if updateType == .dontMove {
-			// User pressed the forward-delete key
-			self.cellViews[index].isEditable = true
-			if index < self.cellViews.count - 1 {
-				self.cellViews[index + 1].isEditable = true
-				let affectedCells = self.cellViews.suffix(self.cellViews.count - index - 1)
-				affectedCells.forEach {
-					$0.content = ""
-					$0.isEditable = false
-				}
-			}
-		}
-
-		self.syncValue()
-
-		switch updateType {
-		case .moveForward:
-			self.cellViews.forEach {
-				if $0.index == index + 1 {
-					$0.window?.makeFirstResponder($0)
-					$0.isEditable = true
-				}
-				else {
-					$0.isEditable = false
-				}
-			}
-
-			if index == self.cellViews.count - 1 {
-				self.window?.makeFirstResponder(self.nextKeyView)
-			}
-		case .moveBack:
-			self.cellViews.forEach {
-					if $0.index == index - 1 {
-						$0.window?.makeFirstResponder($0)
-					}
-				}
-		case .dontMove:
-			_ = 5
-			// Do nothing
-		}
-
-		/// If we have a value which matches the pattern then tell the delegate
-		if pattern.filter({ $0 == "X" }).count == self.currentValue.count {
-			Swift.print(self.currentValue)
-			self.isValid = true
-			self.delegate?.passcodeView(self, updatedPasscodeValue: self.currentValue)
-		}
-		else {
-			self.isValid = false
 		}
 	}
 }
