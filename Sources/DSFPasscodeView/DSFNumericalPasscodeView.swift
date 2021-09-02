@@ -216,7 +216,7 @@ public extension DSFNumericalPasscodeView {
 				return true
 			}
 		}
-		self.window?.makeFirstResponder(self.cellViews.first)
+		self.window?.makeFirstResponder(self.cellViews.last)
 		return true
 	}
 }
@@ -347,10 +347,15 @@ extension DSFNumericalPasscodeView {
 		switch updateType {
 		case .moveForward:
 			self.cellViews.forEach {
-					if $0.index == index + 1 {
-						$0.window?.makeFirstResponder($0)
-					}
+				if $0.index == index + 1 {
+					$0.window?.makeFirstResponder($0)
+					$0.isEditable = true
 				}
+				else {
+					$0.isEditable = false
+				}
+			}
+
 			if index == self.cellViews.count - 1 {
 				self.window?.makeFirstResponder(self.nextKeyView)
 			}
