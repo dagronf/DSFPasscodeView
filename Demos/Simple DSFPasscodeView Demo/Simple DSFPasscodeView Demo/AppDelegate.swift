@@ -10,23 +10,27 @@ import DSFPasscodeView
 
 @main
 class AppDelegate: NSObject, NSApplicationDelegate {
-
 	@IBOutlet var window: NSWindow!
-	@IBOutlet weak var passcode: DSFNumericalPasscodeView!
+	@IBOutlet var passcode: DSFPasscodeView!
 
-	var observer1: NSKeyValueObservation?
-	var observer2: NSKeyValueObservation?
+	@IBOutlet weak var alphaPasscode: DSFPasscodeView!
 
 	func applicationDidFinishLaunching(_ aNotification: Notification) {
-		// Insert code here to initialize your application
+		// custom character validator
+		self.passcode.delegate = self
 
-		self.observer1 = self.passcode.observe(\.passcodeValue, options: [.new]) { me, value in
-			Swift.print("\(value.newValue)")
+		// Custom validator block - hex characters
+		self.alphaPasscode.characterValidatorBlock = { element in
+
+			guard let e = element.unicodeScalars.first else { return nil }
+			if CharacterSet.alphanumerics.contains(e) {
+				return element.uppercased().first
+			}
+			if element == "😀" { return element }
+			return nil
 		}
 
-		self.observer2 = self.passcode.observe(\.isValidPasscode, options: [.new]) { me, value in
-			Swift.print("\(value.newValue)")
-		}
+		self.window.makeFirstResponder(self.passcode)
 	}
 
 	func applicationWillTerminate(_ aNotification: Notification) {
@@ -37,8 +41,28 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 		self.passcode.clear()
 	}
 
-	@IBAction func toggleIsEditable(_ sender: Any) {
-		self.passcode.isEnabled.toggle()
+	@IBAction func toggleIsEditable(_ sender: NSButton) {
+		self.passcode.isEnabled = (sender.state == .on)
 	}
 }
 
+extension AppDelegate: DSFNumericalPasscodeViewHandling {
+	func passcodeView(_ view: DSFPasscodeView, updatedPasscodeValue passcode: String) {
+		if view === alphaPasscode {
+			Swift.print("ALPHA PASSCODE: New valid passcode -> \(passcode)")
+		}
+		else {
+			Swift.print("PASSCODE: New valid passcode -> \(passcode)")
+		}
+	}
+
+	func passcodeView(_ view: DSFPasscodeView, didTryInvalidCharacter invalidChar: String?, atIndex index: Int) {
+		if view === alphaPasscode {
+			Swift.print("ALPHA PASSCODE: Invalid character \(invalidChar ?? "<undefined>") at index \(index)")
+		}
+		else {
+			Swift.print("PASSCODE: Invalid character \(invalidChar ?? "<undefined>") at index \(index)")
+		}
+		NSSound.beep()
+	}
+}

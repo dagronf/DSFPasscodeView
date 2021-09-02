@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="18122" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="19150" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="18122"/>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="19150"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -14,6 +15,7 @@
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <customObject id="Voe-Tx-rLC" customClass="AppDelegate" customModule="Simple_DSFPasscodeView_Demo" customModuleProvider="target">
             <connections>
+                <outlet property="alphaPasscode" destination="QJ7-8S-vsB" id="Fcf-gM-9zX"/>
                 <outlet property="passcode" destination="cEi-0N-pZQ" id="nK9-ev-aCO"/>
                 <outlet property="window" destination="QvC-M9-y7g" id="gIp-Ho-8D9"/>
             </connections>
@@ -684,113 +686,119 @@
         <window title="Simple DSFPasscodeView Demo" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" animationBehavior="default" id="QvC-M9-y7g">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="335" y="390" width="480" height="360"/>
+            <rect key="contentRect" x="335" y="390" width="517" height="394"/>
             <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1415"/>
             <view key="contentView" misplaced="YES" id="EiT-Mj-1SZ">
-                <rect key="frame" x="0.0" y="0.0" width="560" height="360"/>
+                <rect key="frame" x="0.0" y="0.0" width="517" height="432"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                 <subviews>
-                    <stackView distribution="fill" orientation="horizontal" alignment="centerY" spacing="16" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Uzw-rV-Jna">
-                        <rect key="frame" x="20" y="20" width="528" height="320"/>
+                    <stackView distribution="fill" orientation="vertical" alignment="centerX" spacing="16" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" ambiguous="YES" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Uzw-rV-Jna">
+                        <rect key="frame" x="20" y="58" width="477" height="316"/>
                         <subviews>
-                            <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="9U9-af-MDu">
-                                <rect key="frame" x="0.0" y="128" width="64" height="64"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="64" id="7Qw-sX-60x"/>
-                                    <constraint firstAttribute="height" constant="64" id="ywd-uT-1tB"/>
-                                </constraints>
-                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="cloud" id="CAG-r9-y4G"/>
-                            </imageView>
-                            <stackView distribution="fillProportionally" orientation="vertical" alignment="leading" spacing="16" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="sAZ-cx-ASg">
-                                <rect key="frame" x="80" y="101" width="448" height="118"/>
+                            <stackView distribution="fillProportionally" orientation="vertical" alignment="leading" spacing="16" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" ambiguous="YES" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="sAZ-cx-ASg">
+                                <rect key="frame" x="0.0" y="132" width="477" height="184"/>
                                 <subviews>
-                                    <textField horizontalHuggingPriority="100" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="4lk-c5-EVu">
-                                        <rect key="frame" x="-2" y="102" width="452" height="16"/>
-                                        <textFieldCell key="cell" lineBreakMode="clipping" alignment="left" title="Enter the verification code sent to +1 (417) ...." id="c1j-tp-eL9">
+                                    <textField horizontalHuggingPriority="100" verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="4lk-c5-EVu">
+                                        <rect key="frame" x="-2" y="168" width="481" height="16"/>
+                                        <textFieldCell key="cell" lineBreakMode="clipping" alignment="left" title="Enter the verification code sent to +1 (417) ....  [0-9 only]" id="c1j-tp-eL9">
                                             <font key="font" metaFont="systemSemibold" size="13"/>
                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
                                     </textField>
-                                    <customView identifier="SMS Verification" horizontalHuggingPriority="100" verticalHuggingPriority="999" translatesAutoresizingMaskIntoConstraints="NO" id="cEi-0N-pZQ" customClass="DSFNumericalPasscodeView" customModule="DSFPasscodeView">
-                                        <rect key="frame" x="0.0" y="36" width="448" height="50"/>
-                                        <userDefinedRuntimeAttributes>
-                                            <userDefinedRuntimeAttribute type="string" keyPath="pattern" value="XXX-XXX"/>
-                                            <userDefinedRuntimeAttribute type="number" keyPath="fontSize">
-                                                <real key="value" value="32"/>
-                                            </userDefinedRuntimeAttribute>
-                                            <userDefinedRuntimeAttribute type="number" keyPath="xPadding">
-                                                <real key="value" value="12"/>
-                                            </userDefinedRuntimeAttribute>
-                                            <userDefinedRuntimeAttribute type="number" keyPath="yPadding">
-                                                <real key="value" value="8"/>
-                                            </userDefinedRuntimeAttribute>
-                                            <userDefinedRuntimeAttribute type="string" keyPath="fontName" value="SF Pro Display Medium"/>
-                                            <userDefinedRuntimeAttribute type="number" keyPath="spacing">
-                                                <real key="value" value="8"/>
-                                            </userDefinedRuntimeAttribute>
-                                            <userDefinedRuntimeAttribute type="number" keyPath="groupSpacing">
-                                                <real key="value" value="16"/>
-                                            </userDefinedRuntimeAttribute>
-                                        </userDefinedRuntimeAttributes>
-                                        <connections>
-                                            <outlet property="nextKeyView" destination="GId-7q-fJy" id="Z4F-fy-Auz"/>
-                                        </connections>
-                                    </customView>
-                                    <stackView distribution="fill" orientation="horizontal" alignment="firstBaseline" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fWJ-Oj-fZY">
-                                        <rect key="frame" x="0.0" y="0.0" width="448" height="20"/>
+                                    <stackView distribution="fill" orientation="vertical" alignment="centerX" spacing="16" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" ambiguous="YES" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9nP-YD-nui">
+                                        <rect key="frame" x="0.0" y="66" width="477" height="86"/>
                                         <subviews>
-                                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="GId-7q-fJy">
-                                                <rect key="frame" x="-7" y="-7" width="128" height="32"/>
-                                                <buttonCell key="cell" type="push" title="Clear Passcode" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="8qh-fL-b2o">
-                                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                    <font key="font" metaFont="system"/>
-                                                </buttonCell>
+                                            <customView identifier="SMS Verification" horizontalHuggingPriority="100" verticalHuggingPriority="999" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="cEi-0N-pZQ" customClass="DSFPasscodeView" customModule="DSFPasscodeView">
+                                                <rect key="frame" x="0.0" y="36" width="477" height="50"/>
+                                                <userDefinedRuntimeAttributes>
+                                                    <userDefinedRuntimeAttribute type="string" keyPath="pattern" value="###-###"/>
+                                                    <userDefinedRuntimeAttribute type="number" keyPath="fontSize">
+                                                        <real key="value" value="42"/>
+                                                    </userDefinedRuntimeAttribute>
+                                                    <userDefinedRuntimeAttribute type="string" keyPath="fontName" value="SF Compact Rounded"/>
+                                                    <userDefinedRuntimeAttribute type="number" keyPath="cellSpacing">
+                                                        <real key="value" value="6"/>
+                                                    </userDefinedRuntimeAttribute>
+                                                    <userDefinedRuntimeAttribute type="number" keyPath="groupSpacing">
+                                                        <real key="value" value="12"/>
+                                                    </userDefinedRuntimeAttribute>
+                                                    <userDefinedRuntimeAttribute type="string" keyPath="allowableCharacters" value="0123456789"/>
+                                                    <userDefinedRuntimeAttribute type="number" keyPath="yPadding">
+                                                        <real key="value" value="-2"/>
+                                                    </userDefinedRuntimeAttribute>
+                                                </userDefinedRuntimeAttributes>
                                                 <connections>
-                                                    <action selector="resetPasscode:" target="Voe-Tx-rLC" id="nnO-P3-Cs8"/>
+                                                    <outlet property="nextKeyView" destination="GId-7q-fJy" id="Z4F-fy-Auz"/>
                                                 </connections>
-                                            </button>
-                                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="CSM-B5-rfl">
-                                                <rect key="frame" x="115" y="-7" width="127" height="32"/>
-                                                <buttonCell key="cell" type="push" title="Toggle Enabled" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="6zc-i0-2Nc">
-                                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                    <font key="font" metaFont="system"/>
-                                                </buttonCell>
-                                                <connections>
-                                                    <action selector="toggleIsEditable:" target="Voe-Tx-rLC" id="Xba-jP-arR"/>
-                                                </connections>
-                                            </button>
-                                            <customView horizontalHuggingPriority="10" verticalHuggingPriority="10" horizontalCompressionResistancePriority="10" verticalCompressionResistancePriority="10" translatesAutoresizingMaskIntoConstraints="NO" id="is4-F5-cUY">
-                                                <rect key="frame" x="243" y="0.0" width="163" height="6"/>
                                             </customView>
-                                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="rzV-Ld-rIE">
-                                                <rect key="frame" x="412" y="3" width="38" height="16"/>
-                                                <textFieldCell key="cell" lineBreakMode="clipping" title="Valid!" id="i1N-oC-i9s">
-                                                    <font key="font" metaFont="system"/>
-                                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                                </textFieldCell>
-                                                <connections>
-                                                    <binding destination="Voe-Tx-rLC" name="hidden" keyPath="self.passcode.isValidPasscode" id="gcG-S5-Ppu">
-                                                        <dictionary key="options">
-                                                            <string key="NSValueTransformerName">NSNegateBoolean</string>
-                                                        </dictionary>
-                                                    </binding>
-                                                </connections>
-                                            </textField>
+                                            <stackView distribution="fill" orientation="horizontal" alignment="top" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="GaW-EH-9ZD">
+                                                <rect key="frame" x="0.0" y="0.0" width="477" height="20"/>
+                                                <subviews>
+                                                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Bm1-TH-sjY">
+                                                        <rect key="frame" x="-2" y="3" width="75" height="18"/>
+                                                        <buttonCell key="cell" type="check" title="Enabled" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="5d7-cd-jCe">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="toggleIsEditable:" target="Voe-Tx-rLC" id="pqW-pD-SVP"/>
+                                                        </connections>
+                                                    </button>
+                                                    <customView horizontalHuggingPriority="10" verticalHuggingPriority="10" horizontalCompressionResistancePriority="10" verticalCompressionResistancePriority="10" translatesAutoresizingMaskIntoConstraints="NO" id="mQk-jx-tpp">
+                                                        <rect key="frame" x="81" y="0.0" width="240" height="20"/>
+                                                    </customView>
+                                                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="GId-7q-fJy">
+                                                        <rect key="frame" x="322" y="-7" width="69" height="32"/>
+                                                        <buttonCell key="cell" type="push" title="Reset" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="8qh-fL-b2o">
+                                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="resetPasscode:" target="Voe-Tx-rLC" id="nnO-P3-Cs8"/>
+                                                            <binding destination="Voe-Tx-rLC" name="enabled" keyPath="self.passcode.isEmpty" id="gX0-8a-fNg">
+                                                                <dictionary key="options">
+                                                                    <string key="NSValueTransformerName">NSNegateBoolean</string>
+                                                                </dictionary>
+                                                            </binding>
+                                                        </connections>
+                                                    </button>
+                                                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="iKu-3z-aIH">
+                                                        <rect key="frame" x="385" y="-7" width="99" height="32"/>
+                                                        <buttonCell key="cell" type="push" title="Continue…" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="s1J-82-CqS">
+                                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <binding destination="Voe-Tx-rLC" name="enabled" keyPath="self.passcode.isValidPasscode" id="TWM-yT-IVL"/>
+                                                        </connections>
+                                                    </button>
+                                                </subviews>
+                                                <visibilityPriorities>
+                                                    <integer value="1000"/>
+                                                    <integer value="1000"/>
+                                                    <integer value="1000"/>
+                                                    <integer value="1000"/>
+                                                </visibilityPriorities>
+                                                <customSpacing>
+                                                    <real value="3.4028234663852886e+38"/>
+                                                    <real value="3.4028234663852886e+38"/>
+                                                    <real value="3.4028234663852886e+38"/>
+                                                    <real value="3.4028234663852886e+38"/>
+                                                </customSpacing>
+                                            </stackView>
                                         </subviews>
                                         <visibilityPriorities>
-                                            <integer value="1000"/>
-                                            <integer value="1000"/>
                                             <integer value="1000"/>
                                             <integer value="1000"/>
                                         </visibilityPriorities>
                                         <customSpacing>
                                             <real value="3.4028234663852886e+38"/>
                                             <real value="3.4028234663852886e+38"/>
-                                            <real value="3.4028234663852886e+38"/>
-                                            <real value="3.4028234663852886e+38"/>
                                         </customSpacing>
+                                    </stackView>
+                                    <stackView distribution="fill" orientation="horizontal" alignment="firstBaseline" horizontalStackHuggingPriority="10" verticalStackHuggingPriority="250" horizontalHuggingPriority="10" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fWJ-Oj-fZY">
+                                        <rect key="frame" x="0.0" y="0.0" width="477" height="50"/>
                                     </stackView>
                                 </subviews>
                                 <visibilityPriorities>
@@ -804,12 +812,75 @@
                                     <real value="3.4028234663852886e+38"/>
                                 </customSpacing>
                             </stackView>
+                            <box horizontalHuggingPriority="10" verticalHuggingPriority="750" ambiguous="YES" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="nEB-Xx-Fjy">
+                                <rect key="frame" x="0.0" y="113" width="477" height="5"/>
+                            </box>
+                            <stackView distribution="fillProportionally" orientation="vertical" alignment="leading" spacing="16" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" ambiguous="YES" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Yv7-F9-bZg">
+                                <rect key="frame" x="0.0" y="17" width="477" height="82"/>
+                                <subviews>
+                                    <textField horizontalHuggingPriority="100" verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Tvu-ei-2QJ" userLabel="Please enter the licence key (0-9, A-Z)">
+                                        <rect key="frame" x="-2" y="66" width="481" height="16"/>
+                                        <textFieldCell key="cell" lineBreakMode="clipping" alignment="left" title="Please enter the passcode as was send via email [0-9, A-Z and 😀]" id="lLT-6t-16Q">
+                                            <font key="font" metaFont="systemSemibold" size="13"/>
+                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <stackView distribution="fill" orientation="vertical" alignment="centerX" spacing="16" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" ambiguous="YES" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="BEQ-qR-YTd">
+                                        <rect key="frame" x="0.0" y="0.0" width="477" height="50"/>
+                                        <subviews>
+                                            <customView identifier="SMS Verification" horizontalHuggingPriority="100" verticalHuggingPriority="999" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="QJ7-8S-vsB" customClass="DSFPasscodeView" customModule="DSFPasscodeView">
+                                                <rect key="frame" x="0.0" y="0.0" width="477" height="50"/>
+                                                <userDefinedRuntimeAttributes>
+                                                    <userDefinedRuntimeAttribute type="string" keyPath="pattern" value="####-####-###"/>
+                                                    <userDefinedRuntimeAttribute type="number" keyPath="fontSize">
+                                                        <real key="value" value="26"/>
+                                                    </userDefinedRuntimeAttribute>
+                                                    <userDefinedRuntimeAttribute type="number" keyPath="cellSpacing">
+                                                        <real key="value" value="6"/>
+                                                    </userDefinedRuntimeAttribute>
+                                                    <userDefinedRuntimeAttribute type="number" keyPath="groupSpacing">
+                                                        <real key="value" value="12"/>
+                                                    </userDefinedRuntimeAttribute>
+                                                    <userDefinedRuntimeAttribute type="number" keyPath="yPadding">
+                                                        <real key="value" value="0.0"/>
+                                                    </userDefinedRuntimeAttribute>
+                                                </userDefinedRuntimeAttributes>
+                                                <connections>
+                                                    <outlet property="delegate" destination="Voe-Tx-rLC" id="pFL-nL-wJj"/>
+                                                </connections>
+                                            </customView>
+                                        </subviews>
+                                        <visibilityPriorities>
+                                            <integer value="1000"/>
+                                        </visibilityPriorities>
+                                        <customSpacing>
+                                            <real value="3.4028234663852886e+38"/>
+                                        </customSpacing>
+                                    </stackView>
+                                </subviews>
+                                <visibilityPriorities>
+                                    <integer value="1000"/>
+                                    <integer value="1000"/>
+                                </visibilityPriorities>
+                                <customSpacing>
+                                    <real value="3.4028234663852886e+38"/>
+                                    <real value="3.4028234663852886e+38"/>
+                                </customSpacing>
+                            </stackView>
+                            <box horizontalHuggingPriority="10" verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="829-gG-kVr">
+                                <rect key="frame" x="0.0" y="-2" width="477" height="5"/>
+                            </box>
                         </subviews>
                         <visibilityPriorities>
                             <integer value="1000"/>
                             <integer value="1000"/>
+                            <integer value="1000"/>
+                            <integer value="1000"/>
                         </visibilityPriorities>
                         <customSpacing>
+                            <real value="3.4028234663852886e+38"/>
+                            <real value="3.4028234663852886e+38"/>
                             <real value="3.4028234663852886e+38"/>
                             <real value="3.4028234663852886e+38"/>
                         </customSpacing>
@@ -818,14 +889,12 @@
                 <constraints>
                     <constraint firstItem="Uzw-rV-Jna" firstAttribute="top" secondItem="EiT-Mj-1SZ" secondAttribute="top" constant="20" symbolic="YES" id="5hj-Sz-iny"/>
                     <constraint firstItem="Uzw-rV-Jna" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" constant="20" symbolic="YES" id="OiG-JI-zp2"/>
-                    <constraint firstAttribute="bottom" secondItem="Uzw-rV-Jna" secondAttribute="bottom" constant="20" symbolic="YES" id="nMT-PA-Dv0"/>
+                    <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="Uzw-rV-Jna" secondAttribute="bottom" constant="20" symbolic="YES" id="nMT-PA-Dv0"/>
                     <constraint firstAttribute="trailing" secondItem="Uzw-rV-Jna" secondAttribute="trailing" constant="20" symbolic="YES" id="qDA-JM-t2b"/>
                 </constraints>
             </view>
-            <point key="canvasLocation" x="105" y="515"/>
+            <point key="canvasLocation" x="327.5" y="491"/>
         </window>
+        <userDefaultsController representsSharedInstance="YES" id="mCG-Om-rRX"/>
     </objects>
-    <resources>
-        <image name="cloud" width="400" height="400"/>
-    </resources>
 </document>
