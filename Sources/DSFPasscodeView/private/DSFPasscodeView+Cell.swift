@@ -258,16 +258,16 @@ extension DSFPasscodeView.Cell {
 		case kVK_ForwardDelete:
 			self.content = ""
 			self.parent.cellDidUpdate(self.index, .dontMove)
+		case kVK_ANSI_KeypadClear:
+			self.parent.cellDidUpdate(self.index, .clear)
 		case kVK_Tab:
 			super.keyDown(with: event)
 			return
 		case kVK_Escape:
 			super.keyDown(with: event)
 			return
-		case kVK_ANSI_KeypadClear:
-			self.parent.cellDidUpdate(self.index, .clear)
 		default:
-			self.parent.notifyUserOfInvalidCharacter(ch: nil, index: self.index)
+			self.parent.notifyUserOfInvalidCharacter(ch: String(firstChar), index: self.index)
 			return
 		}
 	}

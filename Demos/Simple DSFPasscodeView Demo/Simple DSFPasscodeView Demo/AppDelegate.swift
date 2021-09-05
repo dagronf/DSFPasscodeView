@@ -46,8 +46,17 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 	}
 }
 
-extension AppDelegate: DSFNumericalPasscodeViewHandling {
-	func passcodeView(_ view: DSFPasscodeView, updatedPasscodeValue passcode: String) {
+extension AppDelegate: DSFPasscodeViewHandling {
+	func passcodeViewDidChange(_ view: DSFPasscodeView) {
+		if view === alphaPasscode {
+			Swift.print("ALPHA PASSCODE: changed...")
+		}
+		else {
+			Swift.print("PASSCODE: changed...")
+		}
+	}
+
+	func passcodeView(_ view: DSFPasscodeView, validPasscodeValue passcode: String) {
 		if view === alphaPasscode {
 			Swift.print("ALPHA PASSCODE: New valid passcode -> \(passcode)")
 		}

@@ -28,30 +28,24 @@ import Foundation
 import AppKit
 
 /// Protocol for managing content within the Passcode control
-@objc public protocol DSFNumericalPasscodeViewHandling: NSObjectProtocol {
+@objc public protocol DSFPasscodeViewHandling: NSObjectProtocol {
+	/// Called when the content of the passcode cells change.
+	/// - Parameters:
+	///   - view: The passcode view
+	@objc optional func passcodeViewDidChange(_ view: DSFPasscodeView)
+
 	/// Called when the passcode contains 'valid' content
 	/// - Parameters:
 	///   - view: The passcode view
-	///   - passcode: The string containing the valid content
-	func passcodeView(_ view: DSFPasscodeView, updatedPasscodeValue passcode: String)
-
+	///   - passcode: The string containing the valid passcode
+	@objc optional func passcodeView(_ view: DSFPasscodeView, validPasscodeValue passcode: String)
 
 	/// Called when the user either types an unsupported character, or presses an invalid key (eg. home)
 	/// - Parameters:
 	///   - view: The passcode view
 	///   - passcode: The string containing the valid content
 	///   - index: The zero-based index of the cell where it was atttempted
-	func passcodeView(_ view: DSFPasscodeView, didTryInvalidCharacter invalidChar: String?, atIndex index: Int)
-}
-
-extension DSFNumericalPasscodeViewHandling {
-	func passcodeView(_ view: DSFPasscodeView, updatedPasscodeValue passcode: String) {
-		// Default implementation - do nothing
-	}
-
-	func passcodeView(_ view: DSFPasscodeView, didTryInvalidCharacter invalidChar: String?, atIndex index: Int) {
-		// Default implementation - do nothing
-	}
+	@objc optional func passcodeView(_ view: DSFPasscodeView, didTryInvalidCharacter invalidChar: String?, atIndex index: Int)
 }
 
 /// Custom validation block type.

@@ -147,9 +147,16 @@ Are there no values specified yet
 
 If the passcode is valid, the passcode value as a string, otherwise nil.
 
-## Delegate
+## Delegate (DSFPasscodeViewHandling)
 
 You can attach a delegate to receive messages back from the view if binding is not your thing.
+
+```swift
+func passcodeViewDidChange(
+   _ view: DSFPasscodeView)
+```
+
+Called when the content of the passcode view changes.
 
 ```swift
 func passcodeView(

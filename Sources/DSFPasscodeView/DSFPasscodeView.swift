@@ -32,7 +32,7 @@ import VIViewInvalidating
 @IBDesignable
 public class DSFPasscodeView: NSView {
 	/// The delegate to receive updates
-	@IBOutlet weak public var delegate: DSFNumericalPasscodeViewHandling?
+	@IBOutlet weak public var delegate: DSFPasscodeViewHandling?
 
 	/// The enabled state for the control
 	@IBInspectable
@@ -409,10 +409,13 @@ internal extension DSFPasscodeView {
 			self.isEmpty = self.currentValue.isEmpty
 		}
 
-		/// If we have a value which matches the pattern then tell the delegate
+		// Call the 'change' callback
+		self.delegate?.passcodeViewDidChange?(self)
+
+		// If we have a value which matches the pattern then tell the delegate
 		if self.passcodeCellCount == self.currentValue.count {
 			self.passcodeValue = self.currentValue
-			self.delegate?.passcodeView(self, updatedPasscodeValue: self.currentValue)
+			self.delegate?.passcodeView?(self, validPasscodeValue: self.currentValue)
 		}
 		else {
 			if self.passcodeValue != nil {
@@ -474,6 +477,6 @@ internal extension DSFPasscodeView {
 	}
 
 	func notifyUserOfInvalidCharacter(ch: String?, index: Int) {
-		self.delegate?.passcodeView(self, didTryInvalidCharacter: ch, atIndex: index)
+		self.delegate?.passcodeView?(self, didTryInvalidCharacter: ch, atIndex: index)
 	}
 }
