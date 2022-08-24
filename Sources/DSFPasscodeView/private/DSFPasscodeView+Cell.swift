@@ -28,6 +28,7 @@ import AppKit
 import Carbon.HIToolbox
 import Foundation
 import VIViewInvalidating
+import DSFAppearanceManager
 
 extension DSFPasscodeView {
 	class Cell: NSView {
@@ -117,7 +118,7 @@ extension DSFPasscodeView {
 
 extension DSFPasscodeView.Cell {
 	var HideShadows: Bool {
-		return ReduceTransparency || IncreaseContrast
+		DSFAppearanceManager.ReduceTransparency || DSFAppearanceManager.IncreaseContrast
 	}
 	
 	override public var wantsUpdateLayer: Bool {
@@ -377,7 +378,7 @@ extension DSFPasscodeView.Cell: NSTextInputClient {
 extension DSFPasscodeView.Cell {
 	var backgroundColor: CGColor {
 		if isEnabled {
-			if isDarkMode() {
+			if self.isDarkMode {
 				return NSColor.controlBackgroundColor.withAlphaComponent(0.5).cgColor
 			}
 			else {
@@ -385,7 +386,7 @@ extension DSFPasscodeView.Cell {
 			}
 		}
 		else {
-			if isDarkMode() {
+			if self.isDarkMode {
 				return NSColor.textColor.withAlphaComponent(0.05).cgColor
 			}
 			else {
@@ -395,12 +396,12 @@ extension DSFPasscodeView.Cell {
 	}
 	
 	var borderColor: CGColor {
-		if IncreaseContrast {
+		if DSFAppearanceManager.IncreaseContrast {
 			if isEnabled {
 				return NSColor.textColor.cgColor
 			}
 			else {
-				return isDarkMode() ? NSColor.disabledControlTextColor.cgColor : NSColor.quaternaryLabelColor.cgColor
+				return self.isDarkMode ? NSColor.disabledControlTextColor.cgColor : NSColor.quaternaryLabelColor.cgColor
 			}
 		}
 		else {
@@ -418,14 +419,14 @@ extension DSFPasscodeView.Cell {
 			return NSColor.textColor.cgColor
 		}
 		else {
-			return isDarkMode() ? NSColor.disabledControlTextColor.cgColor : NSColor.quaternaryLabelColor.cgColor
+			return self.isDarkMode ? NSColor.disabledControlTextColor.cgColor : NSColor.quaternaryLabelColor.cgColor
 		}
 	}
 	
 	var cursorColor: CGColor? {
 		if isEnabled {
 			if self.window?.firstResponder == self, self.window?.isKeyWindow ?? false {
-				return NSColor.selectedTextBackgroundColor.withAlphaComponent(IncreaseContrast ? 0.2 : 0.4).cgColor
+				return NSColor.selectedTextBackgroundColor.withAlphaComponent(DSFAppearanceManager.IncreaseContrast ? 0.2 : 0.4).cgColor
 			}
 			else {
 				return nil

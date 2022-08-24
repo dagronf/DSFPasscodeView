@@ -2,6 +2,15 @@
   "object": {
     "pins": [
       {
+        "package": "DSFAppearanceManager",
+        "repositoryURL": "https://github.com/dagronf/DSFAppearanceManager",
+        "state": {
+          "branch": null,
+          "revision": "beb1e728eb8d4dfee45f95eab8f18c16879d19fa",
+          "version": "3.0.4"
+        }
+      },
+      {
         "package": "VIViewInvalidating",
         "repositoryURL": "https://github.com/dagronf/VIViewInvalidating",
         "state": {

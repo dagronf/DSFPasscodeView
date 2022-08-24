@@ -28,16 +28,6 @@
 
 import AppKit
 
-// Is high contrast turned on
-@inlinable var IncreaseContrast: Bool {
-	NSWorkspace.shared.accessibilityDisplayShouldIncreaseContrast
-}
-
-// Is high contrast turned on
-@inlinable var ReduceTransparency: Bool {
-	NSWorkspace.shared.accessibilityDisplayShouldReduceTransparency
-}
-
 extension NSView {
 	// Pin 'self' within 'other' view
 	func pinEdges(to other: NSView, edgeInset: CGFloat = 0, animate: Bool = false) {
@@ -51,14 +41,6 @@ extension NSView {
 		target.trailingAnchor.constraint(equalTo: other.trailingAnchor, constant: -edgeInsets.right).isActive = true
 		target.topAnchor.constraint(equalTo: other.topAnchor, constant: edgeInsets.top).isActive = true
 		target.bottomAnchor.constraint(equalTo: other.bottomAnchor, constant: -edgeInsets.bottom).isActive = true
-	}
-
-	@inlinable func isDarkMode() -> Bool {
-		if #available(*, macOS 10.14) {
-			let appearance = self.effectiveAppearance.bestMatch(from: [.aqua, .darkAqua])
-			return appearance == .darkAqua
-		}
-		return self.effectiveAppearance.name != .aqua && self.effectiveAppearance.name != .vibrantLight
 	}
 }
 
